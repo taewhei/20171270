@@ -1,7 +1,9 @@
 #pragma once
+#include<vector>
 #include "SDL.h"
 #include"GameObject.h"
 #include"Player.h"
+#include"Enemy.h"
 
 class Game
 {
@@ -21,6 +23,13 @@ private:
 	SDL_Renderer* m_pRenderer;
 	bool m_bRunning;
 	int m_CurrentFrame;
-	GameObject m_go;
-	Player m_player;
+	//GameObject m_go;
+	//Player m_player;
+
+	std::vector<GameObject*> m_gameObjects;
+
+	GameObject* m_go;
+	GameObject* m_player;
+	GameObject* m_enemy;
+
 };
