@@ -2,7 +2,7 @@
 #include "TextureManager.h"
 #include <iostream>
 #include <SDL_image.h>
-
+#include "InputHandler.h"
 Game* Game::s_pInstance = 0;
 
 Game* Game::Instance()
@@ -29,8 +29,6 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		TheTextureManager::Instance()->load("Assets/animate-alpha.png", "animate", m_pRenderer);
 
 		m_gameObjects.push_back(new Player(new LoaderParams(100, 100, 128, 82, "animate")));
-		m_gameObjects.push_back(new Enemy(new LoaderParams(300, 300, 128, 82, "animate")));
-
 
 		SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 255);
 	}
@@ -58,23 +56,12 @@ void Game::clean()
 	std::cout << "cleaning game\n";
 	SDL_DestroyWindow(m_pWindow);
 	SDL_DestroyRenderer(m_pRenderer);
+	TheInputHandler::Instance()->clean();
 	SDL_Quit();
 }
 void Game::handleEvents()
 {
-	SDL_Event event;
-	if (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-		case SDL_QUIT:
-			m_bRunning = false;
-			break;
-		default:
-			break;
-		}
-	}
-
+	TheInputHandler::Instance()->update();
 }
 void Game::update()
 {
@@ -89,4 +76,8 @@ void Game::update()
 Game::Game()
 {
 
+}
+void Game::quit()
+{
+	m_bRunning = false;
 }
