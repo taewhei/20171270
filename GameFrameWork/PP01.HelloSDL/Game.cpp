@@ -3,37 +3,36 @@
 
 bool Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
-	bool g_bRunning = true;
-
-	SDL_Window*g_pWindow = 0;
-	SDL_Renderer*g_pRenderer = 0;
-
+	m_bRunning = true;
 	if (SDL_Init(SDL_INIT_EVERYTHING) >= 0)
 	{
 		if (fullscreen == true)
 		{
-			g_pWindow = SDL_CreateWindow(title, xpos, ypos, width, height, SDL_WINDOW_FULLSCREEN);
+			m_pWindow = SDL_CreateWindow(title, xpos, ypos, width, height, SDL_WINDOW_FULLSCREEN);
 		}
 		else
 		{
-			g_pWindow = SDL_CreateWindow(title, xpos, ypos, width, height, SDL_WINDOW_SHOWN);
+			m_pWindow = SDL_CreateWindow(title, xpos, ypos, width, height, SDL_WINDOW_SHOWN);
 		}
 
-		if (g_pWindow != 0) {
-			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
+		if (m_pWindow != 0) {
+			m_pRenderer = SDL_CreateRenderer(m_pWindow, -1, 0);
 
 		}
 
 	}
 	else {
-		return 1;
+		return false;
 	}
-	SDL_Rect rect = { 10,10,40,40 };
 
-	SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 0, 255);
+	SDL_Surface* pTempSurface = SDL_LoadBMP("assets/rider.bmp");
 
-	SDL_Delay(5000);
-	SDL_Quit();
+	m_pTexture = SDL_CreateTextureFromSurface(m_pRenderer, pTempSurface);
+
+	SDL_FreeSurface(pTempSurface);
+
+	SDL_QueryTexture(m_pTexture, NULL, NULL, &m_sourceRectangle.w, &m_sourceRectangle.h);
+
 	return true;
 }
 void Game::update()
@@ -42,7 +41,14 @@ void Game::update()
 }
 void Game::render()
 {
+	m_destinationRectangle.x = m_sourceRectangle.x = 0;
+	m_destinationRectangle.y = m_sourceRectangle.y = 0;
+	m_destinationRectangle.w = m_sourceRectangle.w;
+	m_destinationRectangle.h = m_sourceRectangle.h;
+
 	SDL_RenderClear(m_pRenderer);
+
+	SDL_RenderCopy(m_pRenderer, m_pTexture, &m_sourceRectangle, &m_destinationRectangle);
 	SDL_RenderPresent(m_pRenderer);
 }
 void Game::clean()
