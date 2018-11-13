@@ -29,4 +29,4 @@ public:
 		}
 		return s_pInstance;
 	}
-};
+}; typedef TextureManager TheTextureManager;
