@@ -1,6 +1,7 @@
-#include <iostream>
-#include<SDL_image.h>
 #include "Game.h"
+#include <iostream>
+#include <SDL_image.h>
+
 
 bool Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -13,28 +14,32 @@ bool Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		}
 
 		m_bRunning = true;
-		m_textureManager.load("assets/animate-alpha.png", "animate", m_pRenderer);
 
-		SDL_SetRenderDrawColor(m_pRenderer, 255, 0, 0, 255);
+
+		if (!TextureManager::Instance()->load("assets/animate-alpha.png", "animate", m_pRenderer))
+		{
+			return false;
+		}
+
+
 	}
 	else {
-		return false; // sdl could not initialize
+		return false;
 	}
 	return true;
+}
 
-}
-void Game::update()
-{
-	m_currentFrame = int(((SDL_GetTicks() / 100) % 6));
-}
+
 void Game::render()
 {
 	SDL_RenderClear(m_pRenderer);
-	m_textureManager.draw("animate", 0, 0, 128, 82, m_pRenderer);
-	m_textureManager.drawFrame("animate", 100, 100, 128, 82, 1,
-		m_currentFrame, m_pRenderer);
+	TextureManager::Instance()->draw("animate", 0, 0, 128, 82, m_pRenderer);
+	TextureManager::Instance()->drawFrame("animate", 100, 100, 128, 82, 1, m_currentFrame, m_pRenderer);
+
+
 	SDL_RenderPresent(m_pRenderer);
 }
+
 void Game::clean()
 {
 	std::cout << "cleaning game\n";
@@ -56,4 +61,10 @@ void Game::handleEvents()
 			break;
 		}
 	}
+
+}
+void Game::update()
+{
+	m_currentFrame = int(((SDL_GetTicks() / 100) % 6));
+
 }
